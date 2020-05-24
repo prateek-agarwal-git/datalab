@@ -229,7 +229,12 @@ int isAsciiDigit(int x) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+  x = !(!x); // if x us non zero , then it is replaced with 1
+  int l = ~(~x+1); // l is all 1's if x is 0 and l is all 0's if x is 1
+
+// x is zero => l is all 1 's => z should be the output
+// x is one => l is all zeros => y should be the output.
+  return ((l&z)|((~l) &y));
 }
 /*
  * isLessOrEqual - if x <= y  then return 1, else return 0
