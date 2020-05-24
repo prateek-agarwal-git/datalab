@@ -134,6 +134,7 @@ NOTES:
 
 
 #endif
+// #include <stdio.h>
 //1
 /*
  * bitXor - x^y using only ~ and &
@@ -229,8 +230,9 @@ int isAsciiDigit(int x) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
+  int l;
   x = !(!x); // if x us non zero , then it is replaced with 1
-  int l = ~(~x+1); // l is all 1's if x is 0 and l is all 0's if x is 1
+  l = ~(~x+1); // l is all 1's if x is 0 and l is all 0's if x is 1
 
 // x is zero => l is all 1 's => z should be the output
 // x is one => l is all zeros => y should be the output.
@@ -244,7 +246,16 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+  int l;
+  int sbx = (x>>31)&1;
+  int sby = (y >> 31)&1;
+  int sbl;
+  l = x + (~y)+ 1;
+  // printf("l = %d\n", l);
+  sbl = (l>>31)&1;
+  int ans = sbx & (sbx^sby); // either x should be negative and  y should be positive
+  ans = ans |((!(sbx^sby))&&sbl); // or x and y are of same sign and l is negative
+  return ((ans |(!l)));
 }
 //4
 /*
