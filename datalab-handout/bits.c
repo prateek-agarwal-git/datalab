@@ -212,7 +212,14 @@ int negate(int x) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  return 2;
+  int y = !(x>>8);//checking first 24 bits are zero
+  int w = !((x& 0xF0)^0x30);// checking 25th and 26th bit from MSB side is zero.
+  // w also checks whether 27th and 28th bit both are 1 (0011 - 3)
+  int m = x & 0xF; // taking
+  int h = !(m >>3); // either number is less than 8
+  int z  = !(m & 0x6); // or number is less than or equal to 9
+
+  return y & w & (h|z);
 }
 /*
  * conditional - same as x ? y : z
