@@ -250,11 +250,12 @@ int isLessOrEqual(int x, int y) {
   int sbx = (x>>31)&1;
   int sby = (y >> 31)&1;
   int sbl;
+  int ans;
   l = x + (~y)+ 1;
   // printf("l = %d\n", l);
   sbl = (l>>31)&1;
-  int ans = sbx & (sbx^sby); // either x should be negative and  y should be positive
-  ans = ans |((!(sbx^sby))&&sbl); // or x and y are of same sign and l is negative
+  ans = sbx & (sbx^sby); // either x should be negative and  y should be positive
+  ans = ans |((!(sbx^sby))&sbl); // or x and y are of same sign and l is negative
   return ((ans |(!l)));
 }
 //4
@@ -290,7 +291,79 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-  return 0;
+  // convet number to positive;
+  // int x =0x7fffffff;
+  // int x = 0x7ffffff1;
+  int sbx = x>>31; // if x is negative, all bits are 1, the number is -1. else all bits are zero - the number is zeros
+  int absX =  (x^sbx )+(sbx&1); //gives the absolute value of x;
+  // int isINTmin =!((1<<31)^x);
+  // int negisINTmin = (~isINTmin)+1;
+  // int msb = 0;
+  // int curr = 0;
+  int ans =0x10;
+  //binary search, startung at 16th bits
+  //  x>>(ans) == 0 -answer is less than 16
+  // != 0 ans - answer is greater than 16, set the 4th bit ;
+  int z = x;
+  x = absX;
+  ans = ((!(x>>ans))<<4)^ ans;
+  ans = ans | 0x08;
+  ans = ((!(x>>ans))<<3)^ ans;
+  ans = ans | 0x04;
+  ans = ((!(x>>ans))<<2)^ ans;
+  ans = ans | 0x02;
+  // printf("%d\n",ans);
+  ans = ((!(x>>ans))<<1)^ ans;
+  // printf("%d\n",ans);
+
+  ans = ans | 0x01;
+  ans = (!(x>>ans))^ ans;
+  // ans+=1;
+  // printf("%d\n",ans);
+
+  ans+=!(z);
+  // printf("%d\n",ans);
+
+  ans+=(1&!(!(z)));
+  // printf("%d\n",ans);
+// z is nonzero and sign bit is zero i.e. positive numbers will require one extra bit
+  ans+= ((!(!(z))) & ((!(z>>31)&1)));
+  // if the number is negative and 30th indexed bit or 31st bit or right of MSB bit is 0, then add 1;
+  int negone = (~1) + 1;
+ ans+=((((z>>(ans))&1) & !(z>>(ans+negone) &1))&(sbx&1));
+ return ans;
+
+
+
+//   int sbx = x>>31; // if x is negative, all bits are 1, the number is -1. else all bits are zero - the number is zeros
+//   int absX =  (x^sbx )+(sbx&1); //gives the absolute value of x;
+//   // int isINTmin =!(absX^x);
+//   // int msb = 0;
+//   // int curr = 0;
+//   int z = x;
+//   int ans =0x10;//binary search, startung at 16th bits
+//   //  x>>(ans) == 0 -answer is less than 16
+//   // != 0 ans - answer is greater than 16, set the 4th bit ;
+//   x = absX;
+//   ans = ((!(x>>ans))<<4)^ ans;
+//   ans = ans | 0x08;
+//   ans = ((!(x>>ans))<<3)^ ans;
+//   ans = ans | 0x04;
+//   ans = ((!(x>>ans))<<2)^ ans;
+//   ans = ans | 0x02;
+//   ans = ((!(x>>ans))<<1)^ ans;
+//   ans = ans | 0x01;
+//   ans = (!(x>>ans))^ ans;
+//   // answer stores the index, so add 1
+//   ans+=(1&!(!(x)));
+// // add one to answer only for positive numbers to account for 2's complement
+// // nothing is added if x is already INT_MIN
+//   // ans+= (!(x>>ans)&1);
+//   ans+= (!(!(z))) & (!((z>>31)&1)));
+//
+//   // ans+= ((z)& !((z>>31)&1));
+//   ans+=!(z);
+
 }
 //float
 /*
