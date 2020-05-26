@@ -304,6 +304,7 @@ int howManyBits(int x) {
   //binary search, startung at 16th bits
   //  x>>(ans) == 0 -answer is less than 16
   // != 0 ans - answer is greater than 16, set the 4th bit ;
+  int negone;
   int z = x;
   x = absX;
   ans = ((!(x>>ans))<<4)^ ans;
@@ -329,40 +330,10 @@ int howManyBits(int x) {
 // z is nonzero and sign bit is zero i.e. positive numbers will require one extra bit
   ans+= ((!(!(z))) & ((!(z>>31)&1)));
   // if the number is negative and 30th indexed bit or 31st bit or right of MSB bit is 0, then add 1;
-  int negone = (~1) + 1;
+   negone = (~1) + 1;
  ans+=((((z>>(ans))&1) & !(z>>(ans+negone) &1))&(sbx&1));
  return ans;
 
-
-
-//   int sbx = x>>31; // if x is negative, all bits are 1, the number is -1. else all bits are zero - the number is zeros
-//   int absX =  (x^sbx )+(sbx&1); //gives the absolute value of x;
-//   // int isINTmin =!(absX^x);
-//   // int msb = 0;
-//   // int curr = 0;
-//   int z = x;
-//   int ans =0x10;//binary search, startung at 16th bits
-//   //  x>>(ans) == 0 -answer is less than 16
-//   // != 0 ans - answer is greater than 16, set the 4th bit ;
-//   x = absX;
-//   ans = ((!(x>>ans))<<4)^ ans;
-//   ans = ans | 0x08;
-//   ans = ((!(x>>ans))<<3)^ ans;
-//   ans = ans | 0x04;
-//   ans = ((!(x>>ans))<<2)^ ans;
-//   ans = ans | 0x02;
-//   ans = ((!(x>>ans))<<1)^ ans;
-//   ans = ans | 0x01;
-//   ans = (!(x>>ans))^ ans;
-//   // answer stores the index, so add 1
-//   ans+=(1&!(!(x)));
-// // add one to answer only for positive numbers to account for 2's complement
-// // nothing is added if x is already INT_MIN
-//   // ans+= (!(x>>ans)&1);
-//   ans+= (!(!(z))) & (!((z>>31)&1)));
-//
-//   // ans+= ((z)& !((z>>31)&1));
-//   ans+=!(z);
 
 }
 //float
@@ -378,7 +349,31 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
-  return 2;
+  unsigned m =0x7f800000;
+  int signedf = 0;
+  unsigned ans;
+  int denormalizedcheck = ~uf;
+  
+  if (((uf&0x80000000)^0x80000000) == 0){
+    signedf = -1;
+  }
+  // int signedbit = 0;
+  // if (signedf<0) signedbit = 1;
+  // if exponent is the largest possible value.i.e. infinity or NAN
+
+  if ((((uf&m)^m) == 0) || (uf==0)) {return uf;}
+
+  // int denormalizedcheck = ~uf;
+  if (((denormalizedcheck&m)^m) == 0){
+      ans = uf<<1;
+      if (signedf<0){
+        ans = ans |0x80000000;
+      }
+  }
+  else{
+    ans = uf + 0x00800000;
+  }
+  return ans;
 }
 /*
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
