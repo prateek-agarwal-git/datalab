@@ -353,7 +353,7 @@ unsigned floatScale2(unsigned uf) {
   int signedf = 0;
   unsigned ans;
   int denormalizedcheck = ~uf;
-  
+
   if (((uf&0x80000000)^0x80000000) == 0){
     signedf = -1;
   }
@@ -388,7 +388,31 @@ unsigned floatScale2(unsigned uf) {
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {
-  return 2;
+  unsigned signedbit = ((uf>>31)&1);
+  //  signed bit is turned off;
+  int ans;
+  unsigned t = (uf&0x7fffffff);
+  unsigned bias = 127;
+  unsigned maxExpo = bias+31;
+  unsigned expo = t>>23;
+  unsigned E;
+  if (expo>=maxExpo) return 0x80000000u;
+  // if (expo == 127 ) return 1;
+  if (expo <127) return 0;
+  E = expo - bias;
+  ans = 0x00800000;
+  // take out last 23 bits;
+  ans = (ans |(0x007fffff&t));
+  if (E< 23){
+    ans = ans>>(23-E);
+  }
+  else{
+    ans = ans<<(E-23);
+  }
+  if (signedbit == 1){
+    ans = -ans;
+  }
+  return ans;
 }
 /*
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
