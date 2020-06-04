@@ -428,5 +428,20 @@ int floatFloat2Int(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
-    return 2;
+    int bit;
+    unsigned ans;
+    if ( x < -149){
+	    return 0;
+    }
+    else if(x>=-149 && x<=-127){
+      bit = x + 149;
+      ans =  1<<bit;
+    }
+    else if (x>=128){
+      ans = 0x7f800000;
+    }
+    else{
+      ans =((x+127)<<23);
+    }
+    return ans;
 }
